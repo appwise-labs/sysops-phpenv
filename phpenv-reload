@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+# fail on first error
+set -e
+
+# restart PHP FPM
+systemctl restart php7.3-fpm
+systemctl restart php7.4-fpm
+
+# reload nginx
+systemctl reload nginx
