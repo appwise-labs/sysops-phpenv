@@ -25,7 +25,10 @@ DOMAIN=${1,,}
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 CURRENT_PHP_VERSION=$(${DIR}/phpenv-php-current-version "${DOMAIN}")
-REQUIRED_PHP_VERSION=$(sudo -i -u "www-${DOMAIN}" "${DIR}/phpenv-php-required-version")
+REQUIRED_PHP_VERSION=$(HOME="/home/www-${DOMAIN}" ${DIR}/phpenv-php-required-version)
+
+echo "Current PHP version: ${CURRENT_PHP_VERSION}"
+echo "Required PHP version: ${REQUIRED_PHP_VERSION}"
 
 # if required PHP version is current PHP version, we are done
 if [ "${CURRENT_PHP_VERSION}" = "${REQUIRED_PHP_VERSION}" ]; then
