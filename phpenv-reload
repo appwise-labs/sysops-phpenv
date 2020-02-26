@@ -41,8 +41,10 @@ FPM_CONF_SRC="/etc/php/${CURRENT_PHP_VERSION}/fpm/pool.d/www-${DOMAIN}.conf"
 FPM_CONF_DST="/etc/php/${REQUIRED_PHP_VERSION}/fpm/pool.d/www-${DOMAIN}.conf"
 mv "${FPM_CONF_SRC}" "${FPM_CONF_DST}"
 
-# update nginx configuration file
-NGINX_CONF="/etc/nginx/sites-enabled/${DOMAIN}.conf"
+# update FPM configuration to create socket at correct path
+sed -i -e "s/php${CURRENT_PHP_VERSION}-fpm/php${REQUIRED_PHP_VERSION}-fpm/g" "${FPM_CONF_DST}"
+# update nginx configuration file to point to correct FPM socket
+NGINX_CONF="/etc/nginx/sites-available/${DOMAIN}.conf"
 sed -i -e "s/php${CURRENT_PHP_VERSION}-fpm/php${REQUIRED_PHP_VERSION}-fpm/g" "${NGINX_CONF}"
 
 # reload nginx
