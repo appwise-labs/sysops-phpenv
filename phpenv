@@ -4,7 +4,9 @@
 set -euo pipefail
 
 # import utilities
-source ./phpenv-utilities
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+source "${DIR}/phpenv-utilities.sh"
 
 # detect required PHP version
 PHP_VERSION=$(required-php-version)

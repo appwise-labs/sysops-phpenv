@@ -4,7 +4,9 @@
 set -euo pipefail
 
 # import utilities
-source ./phpenv-utilities
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+source "${DIR}/phpenv-utilities.sh"
 
 # make sure we have admin rights
 if [[ $EUID > 0 ]]; then
