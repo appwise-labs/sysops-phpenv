@@ -1,24 +1,10 @@
 #!/usr/bin/env bash
 
 # fail on first error
-set -euxo pipefail
+set -euo pipefail
 
-# PHP version
-DEFAULT_PHP_VERSION="7.3"
-PHP_VERSION=
-
-# PHP version file
-PHP_VERSION_FILE="$HOME/www/htdocs/.php-version"
-
-# if PHP version file is readable, read required PHP version
-if [ -r "${PHP_VERSION_FILE}" ]; then
-    PHP_VERSION=$(<"${PHP_VERSION_FILE}")
-fi
-
-# if PHP version is empty, use default PHP version
-if [ -z "${PHP_VERSION}" ]; then
-    PHP_VERSION=${DEFAULT_PHP_VERSION}
-fi
+# detect required PHP version
+PHP_VERSION=$(phpenv-detect-required-version)
 
 # PHP executable
 PHP="/usr/bin/php${PHP_VERSION}"
