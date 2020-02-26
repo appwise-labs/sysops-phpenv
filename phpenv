@@ -3,8 +3,11 @@
 # fail on first error
 set -euo pipefail
 
+# import utilities
+source ./phpenv-utilities
+
 # detect required PHP version
-PHP_VERSION=$(phpenv-detect-required-version)
+PHP_VERSION=$(required-php-version)
 
 # PHP executable
 PHP="/usr/bin/php${PHP_VERSION}"
