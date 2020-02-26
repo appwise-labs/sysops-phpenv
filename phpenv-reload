@@ -1,7 +1,47 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # fail on first error
-set -euxo pipefail
+set -euo pipefail
+
+# make sure we have admin rights
+if [[ $EUID > 0 ]]; then
+    echo >&2 "Need admin rights"
+    exit 1
+fi
+
+# make sure the domain argument is present
+if [ $# -ne 1 ]; then
+    echo >&2 "usage: phpenv-detect-current-version domain"
+    exit 1;
+elif [[ "$1" =~ [^0-9a-zA-Z_-] ]]; then
+    echo "Domain may only contain alphanumerical characters (and the '_' and '-' characters)";
+    exit 1;
+fi
+
+# the domain to reload
+DOMAIN=${1,,}
+
+# detect current and required PHP version
+CURRENT_PHP_VERSION=$(phpenv-detect-current-version)
+REQUIRED_PHP_VERSION=$(phpenv-detect-required-version "${DOMAIN}")
+
+# if required PHP version is current PHP version, we are done
+if [ "${CURRENT_PHP_VERSION}" = "${REQUIRED_PHP_VERSION}" ]; then
+    echo "Done: PHP version didn't change"
+    exit 0;
+fi
+
+# move PHP-FPM configuration file to correct location
+FPM_CONF_SRC="/etc/php/${CURRENT_PHP_VERSION}/fpm/pool.d/www-${DOMAIN}.conf"
+FPM_CONF_DST="/etc/php/${REQUIRED_PHP_VERSION}/fpm/pool.d/www-${DOMAIN}.conf"
+mv "${FPM_CONF_SRC}" "${FPM_CONF_DST}"
+
+# update nginx configuration file
+NGINX_CONF="/etc/nginx/sites-enabled/${DOMAIN}.conf"
+sed -i -e "s/php${CURRENT_PHP_VERSION}-fpm/php${REQUIRED_PHP_VERSION}-fpm/g" "${NGINX_CONF}"
+
+# reload supervisor
+supervisorctl reload
 
 # restart PHP FPM
 systemctl restart php7.3-fpm
