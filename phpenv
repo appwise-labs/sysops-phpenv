@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# fail on first error
+set -euxo pipefail
+
 # PHP version
 DEFAULT_PHP_VERSION="7.3"
 PHP_VERSION=

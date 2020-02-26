@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # fail on first error
-set -e
+set -euxo pipefail
 
 # restart PHP FPM
 systemctl restart php7.3-fpm
