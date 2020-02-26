@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# make sure the domain argument is present
+if [ $# -ne 1 ]; then
+    echo >&2 "usage: phpenv-php-current-version domain"
+    exit 1;
+elif [[ "$1" =~ [^0-9a-zA-Z_-] ]]; then
+    echo "Domain may only contain alphanumerical characters (and the '_' and '-' characters)";
+    exit 1;
+fi
+DOMAIN=$1
+
+# detect path to current configuration file
+IFS=$'\n'
+FPM_CONF=($(ls /etc/php/*/fpm/pool.d/www-${DOMAIN}.conf))
+unset IFS
+
+# make sure we detected exactly one FPM configuration file
+if ! [ ${#FPM_CONF[@]} -eq 1 ]; then
+    echo "Error: Failed to detect current PHP version"
+    exit 1;
+fi
+
+# extract PHP version from path
+PHP_VERSION=$(echo "${FPM_CONF[0]}" | cut -d'/' -f 4)
+
+echo "${PHP_VERSION}"

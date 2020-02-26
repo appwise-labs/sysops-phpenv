@@ -3,13 +3,10 @@
 # fail on first error
 set -euo pipefail
 
-# import utilities
+# detect required PHP version
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "${DIR}/phpenv-utilities.sh"
-
-# detect required PHP version
-PHP_VERSION=$(required-php-version)
+PHP_VERSION=$(${DIR}/phpenv-php-required-version)
 
 # PHP executable
 PHP="/usr/bin/php${PHP_VERSION}"

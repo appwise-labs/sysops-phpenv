@@ -3,11 +3,6 @@
 # fail on first error
 set -euo pipefail
 
-# import utilities
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "${DIR}/phpenv-utilities.sh"
-
 # make sure we have admin rights
 if [[ $EUID > 0 ]]; then
     echo >&2 "Need admin rights"
@@ -16,7 +11,7 @@ fi
 
 # make sure the domain argument is present
 if [ $# -ne 1 ]; then
-    echo >&2 "usage: phpenv-detect-current-version domain"
+    echo >&2 "usage: phpenv-reload domain"
     exit 1;
 elif [[ "$1" =~ [^0-9a-zA-Z_-] ]]; then
     echo "Domain may only contain alphanumerical characters (and the '_' and '-' characters)";
@@ -27,8 +22,10 @@ fi
 DOMAIN=${1,,}
 
 # detect current and required PHP version
-CURRENT_PHP_VERSION=$(current-php-version "${DOMAIN}")
-REQUIRED_PHP_VERSION=$(required-php-version)
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+CURRENT_PHP_VERSION=$(${DIR}/phpenv-php-current-version "${DOMAIN}")
+REQUIRED_PHP_VERSION=$(sudo -i -u "www-${DOMAIN}" "${DIR}/phpenv-php-required-version")
 
 # if required PHP version is current PHP version, we are done
 if [ "${CURRENT_PHP_VERSION}" = "${REQUIRED_PHP_VERSION}" ]; then
