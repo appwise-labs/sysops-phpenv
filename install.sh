@@ -51,3 +51,4 @@ fi
 
 # make sure system uses phpenv instead of plain php from now on
 update-alternatives --install /usr/bin/php php "${PHPENV}" 100
+update-alternatives --auto php
