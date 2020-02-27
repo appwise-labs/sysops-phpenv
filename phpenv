@@ -11,7 +11,7 @@ PHP="/usr/bin/php${PHP_VERSION}"
 
 # if PHP executable is not really executable, fail hard
 if ! [ -x "$(command -v ${PHP})" ]; then
-    echo "Error: PHP executable not found or not executable (${PHP})" >&2
+    echo >&2 "Error: PHP executable not found or not executable (${PHP})"
     exit 1;
 fi
 
