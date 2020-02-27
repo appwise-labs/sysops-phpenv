@@ -4,9 +4,7 @@
 set -euo pipefail
 
 # detect required PHP version
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-PHP_VERSION=$(${DIR}/phpenv-php-required-version)
+PHP_VERSION=$(/opt/bin/phpenv/phpenv-php-required-version)
 
 # PHP executable
 PHP="/usr/bin/php${PHP_VERSION}"

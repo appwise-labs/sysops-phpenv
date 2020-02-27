@@ -10,12 +10,30 @@ if [[ $EUID > 0 ]]; then
 fi
 
 # installation configuration
-INSTALL_DIRECTORY="/root/bin/phpenv"
+INSTALL_DIRECTORY="/opt/bin/phpenv"
 PHPENV="${INSTALL_DIRECTORY}/phpenv"
 PHPENV_RELOAD="${INSTALL_DIRECTORY}/phpenv-reload"
+SHIM_PHPENV_RELOAD="/usr/local/bin/phpenv-reload"
 
-# make sure installation directory is owned by root
-chown -R root:root ${INSTALL_DIRECTORY}
+### Installation
+
+# install (or replace) all files
+mkdir -p "${INSTALL_DIRECTORY}"
+find "${INSTALL_DIRECTORY}" -mindepth 1 -delete
+cp ./phpenv* "${INSTALL_DIRECTORY}"
+chown -R root:root "${INSTALL_DIRECTORY}"
+
+# allow appwise user to execute phpenv-reload with sudo
+cat >"${SHIM_PHPENV_RELOAD}" <<EOT
+#!/usr/bin/env bash
+
+sudo ${PHPENV_RELOAD} "\$@"
+EOT
+chmod +x "${SHIM_PHPENV_RELOAD}"
+
+echo "%appwise ALL = (root) NOPASSWD: ${PHPENV_RELOAD}" > /etc/sudoers.d/phpenv-reload
+
+### Validation
 
 # make sure the phpenv executable is installed and executable
 if ! [ -x "${PHPENV}" ]; then
@@ -29,15 +47,7 @@ if ! [ -x "${PHPENV_RELOAD}" ]; then
     exit 1;
 fi
 
-# allow appwise user to execute phpenv-reload with sudo
-echo "%appwise ALL = (root) NOPASSWD: ${PHPENV_RELOAD}" > /etc/sudoers.d/phpenv-reload
-
-cat >/usr/local/bin/phpenv-reload <<EOT
-#!/usr/bin/env bash
-
-sudo ${PHPENV_RELOAD} "\$@"
-EOT
-chmod +x /usr/local/bin/phpenv-reload
+### Finish up
 
 # make sure system uses phpenv instead of plain php from now on
 update-alternatives --install /usr/bin/php php "${PHPENV}" 100
