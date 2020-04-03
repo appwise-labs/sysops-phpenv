@@ -36,6 +36,13 @@ if [ "${CURRENT_PHP_VERSION}" = "${REQUIRED_PHP_VERSION}" ]; then
     exit 0;
 fi
 
+# make sure required PHP executable is installed and executable
+PHP="/usr/bin/php${REQUIRED_PHP_VERSION}"
+if ! [ -x "$(command -v ${PHP})" ]; then
+    echo >&2 "Error: required PHP executable not found or not executable (${PHP})"
+    exit 1;
+fi
+
 # move PHP-FPM configuration file to correct location
 FPM_CONF_SRC="/etc/php/${CURRENT_PHP_VERSION}/fpm/pool.d/www-${DOMAIN}.conf"
 FPM_CONF_DST="/etc/php/${REQUIRED_PHP_VERSION}/fpm/pool.d/www-${DOMAIN}.conf"
