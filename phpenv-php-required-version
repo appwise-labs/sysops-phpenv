@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # the default PHP version
-DEFAULT_PHP_VERSION="7.3"
+DEFAULT_PHP_VERSION="7.4"
 
 # PHP version
 PHP_VERSION=
