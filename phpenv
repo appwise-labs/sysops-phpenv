@@ -16,4 +16,4 @@ if ! [ -x "$(command -v ${PHP})" ]; then
 fi
 
 # start PHP executable with all arguments passed to this script
-"${PHP}" "$@"
+exec "${PHP}" "$@"
