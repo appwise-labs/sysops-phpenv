@@ -20,7 +20,7 @@ DEFAULT_PHP_VERSION_FILE="${INSTALL_DIRECTORY}/.default-php-version"
 
 # install (or replace) all files
 mkdir -p "${INSTALL_DIRECTORY}"
-find "${INSTALL_DIRECTORY}" -mindepth 1 -delete
+find "${INSTALL_DIRECTORY}" -mindepth 1 ! -name ".default-php-version" -delete
 cp ./phpenv* "${INSTALL_DIRECTORY}"
 chown -R root:root "${INSTALL_DIRECTORY}"
 
