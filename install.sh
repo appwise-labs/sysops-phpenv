@@ -14,6 +14,7 @@ INSTALL_DIRECTORY="/opt/bin/phpenv"
 PHPENV="${INSTALL_DIRECTORY}/phpenv"
 PHPENV_RELOAD="${INSTALL_DIRECTORY}/phpenv-reload"
 SHIM_PHPENV_RELOAD="/usr/local/bin/phpenv-reload"
+DEFAULT_PHP_VERSION_FILE="${INSTALL_DIRECTORY}/.default-php-version"
 
 ### Installation
 
@@ -34,9 +35,20 @@ chmod +x "${SHIM_PHPENV_RELOAD}"
 echo "%appwise ALL = (root) NOPASSWD: ${PHPENV_RELOAD}" > /etc/sudoers.d/phpenv-reload
 
 # set default PHP version
+
+# print current default PHP version, if any
+if [ -r "${DEFAULT_PHP_VERSION_FILE}" ]; then
+    CURRENT_DEFAULT_PHP_VERSION=$(<"${DEFAULT_PHP_VERSION_FILE}")
+
+    if ! [ -z "${CURRENT_DEFAULT_PHP_VERSION}" ]; then
+        echo "Default PHP version currently set to ${CURRENT_DEFAULT_PHP_VERSION}"
+    fi
+fi
+
+# prompt for new default PHP version
 DEFAULT_PHP_VERSION=
 while [ -z "${DEFAULT_PHP_VERSION}" ]; do
-    read -p "Default PHP version (eg 7.4): " DEFAULT_PHP_VERSION
+    read -p "Choose default PHP version (eg 7.4): " DEFAULT_PHP_VERSION
 
     # make sure default PHP executable is installed and executable
     PHP="/usr/bin/php${DEFAULT_PHP_VERSION}"
@@ -45,7 +57,7 @@ while [ -z "${DEFAULT_PHP_VERSION}" ]; do
         DEFAULT_PHP_VERSION=
     fi
 done
-echo "${DEFAULT_PHP_VERSION}" > "${INSTALL_DIRECTORY}/.default-php-version"
+echo "${DEFAULT_PHP_VERSION}" > "${DEFAULT_PHP_VERSION_FILE}"
 
 ### Validation
 
