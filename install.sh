@@ -33,6 +33,20 @@ chmod +x "${SHIM_PHPENV_RELOAD}"
 
 echo "%appwise ALL = (root) NOPASSWD: ${PHPENV_RELOAD}" > /etc/sudoers.d/phpenv-reload
 
+# set default PHP version
+DEFAULT_PHP_VERSION=
+while [ -z "${DEFAULT_PHP_VERSION}" ]; do
+    read -p "Default PHP version (eg 7.4): " DEFAULT_PHP_VERSION
+
+    # make sure default PHP executable is installed and executable
+    PHP="/usr/bin/php${DEFAULT_PHP_VERSION}"
+    if ! [ -x "$(command -v ${PHP})" ]; then
+        echo >&2 "Error: default PHP executable not found or not executable (${PHP})"
+        DEFAULT_PHP_VERSION=
+    fi
+done
+echo "${DEFAULT_PHP_VERSION}" > "${INSTALL_DIRECTORY}/.default-php-version"
+
 ### Validation
 
 # make sure the phpenv executable is installed and executable

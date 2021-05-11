@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# the default PHP version
+DEFAULT_PHP_VERSION="7.4"
+
+PHP_VERSION=
+DEFAULT_PHP_VERSION_FILE="/opt/bin/phpenv/.default-php-version"
+
+# if default PHP version file is readable, read PHP version
+if [ -r "${DEFAULT_PHP_VERSION_FILE}" ]; then
+    PHP_VERSION=$(<"${DEFAULT_PHP_VERSION_FILE}")
+fi
+
+# if PHP version is empty, use default PHP version
+if [ -z "${PHP_VERSION}" ]; then
+    PHP_VERSION=${DEFAULT_PHP_VERSION}
+fi
+
+echo "${PHP_VERSION}"
